@@ -1,0 +1,42 @@
+[
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/main.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/main.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/main.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus_arbiter.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_arbiter.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_arbiter.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus_master_blocking.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_master_blocking.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_master_blocking.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus_master_direct.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_master_direct.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_master_direct.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus_master_non_blocking.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_master_non_blocking.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_master_non_blocking.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus_tools.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_tools.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_tools.cpp"
+},
+{
+  "directory": "/home/leonardo/Workspace/unb/aa/simple_bus/build",
+  "command": "/usr/bin/c++  -I/home/leonardo/Workspace/unb/aa/simple_bus/include -I/home/leonardo/Workspace/unb/aa/simple_bus/simple_bus_headers -Wall -Wextra -Werror=init-self -Wno-unused-parameter -std=gnu++17 -o CMakeFiles/bus_mdu.dir/src/simple_bus_types.cpp.o -c /home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_types.cpp",
+  "file": "/home/leonardo/Workspace/unb/aa/simple_bus/src/simple_bus_types.cpp"
+}
+]
