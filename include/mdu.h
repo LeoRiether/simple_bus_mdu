@@ -7,9 +7,14 @@
 
 struct MDU : public simple_bus_slave_if, public sc_module {
     sc_in<bool> clock;
-    int wait_count;
+
+    // Registradores de entrada
+    int opA, opB;
+
+    int wait_states; // número de ciclos que uma operação demora para terminar
+    int wait_left;   // número de ciclos restantes até a operação atual terminar 
+
     bool verbose;
-    int opA, opB, mLow, mHigh, div, mod;
 
     // Constantes
     enum Const {
@@ -21,90 +26,86 @@ struct MDU : public simple_bus_slave_if, public sc_module {
         Div = 272,
         Mod = 276,
         EndAddr = 319,
-        WaitStates = 5,
     };
 
-    // Retorna uma referência para o inteiro no endereço `addr`
-    // Exemplo: `int_at_addr(OpA) = 5;` é o mesmo que `opA = 5;`
-    int& int_at_addr(unsigned int addr) {
-        if (addr == OpA) return opA;
-        if (addr == OpB) return opB;
-        if (addr == MLow) return mLow;
-        if (addr == MHigh) return mHigh;
-        if (addr == Div) return div;
-        return mod;
-    }
-
     SC_HAS_PROCESS(MDU);
-    MDU(sc_module_name name_, bool verbose_ = false)
-        : sc_module(name_), clock("clock"), wait_count(-1), verbose(verbose_) {
-        SC_METHOD(update_wait_count);
+    MDU(sc_module_name name_, int wait_states_ = 5, bool verbose_ = false)
+        : sc_module(name_),
+          clock("clock"),
+          wait_states(wait_states_),
+          wait_left(-1),
+          verbose(verbose_) {
+        SC_METHOD(update_wait_left);
         dont_initialize();
         sensitive << clock.pos();
     }
 
-    void update_wait_count() {
-        if (wait_count >= 0)
-            wait_count--;
+    void update_wait_left() {
+        if (wait_left >= 0)
+            wait_left--;
 
         if (verbose)
             cout << "@" << sc_time_stamp()
-                 << ": MDU_wait_count == " << wait_count << endl;
+                 << ": MDU_wait_left == " << wait_left << endl;
     }
 
     // Calcula os resultados da multiplicação e da divisão
-    void calculate() {
-        mLow = (1ll * opA * opB) & 0xFFFFFFFF;
-        mHigh = (1ll * opA * opB) >> 32ll;
-        div = opA / opB;
-        mod = opA % opB;
+    int calculate(unsigned int address) {
+        switch (address) {
+            case MLow:  return (1ll * opA * opB) & 0xFFFFFFFF;
+            case MHigh: return (1ll * opA * opB) >> 32ll;
+            case Div:   return opA / opB;
+            case Mod:   return opA % opB;
+            default:    return 0;
+        }
     }
 
     ///////////////////////////////////
     //        Slave Interface        //
     ///////////////////////////////////
     simple_bus_status read(int *data, unsigned int address) {
-        if (wait_count < 0) {
-            wait_count = WaitStates;
+        // O cálculo ainda está sendo feito...
+        if (wait_left > 0)
             return SIMPLE_BUS_WAIT;
-        }
 
-        if (wait_count == 0) {
-            *data = int_at_addr(address);
+        // O cálculo acabou de ser feito
+        if (wait_left == 0) {
+            *data = calculate(address);
             return SIMPLE_BUS_OK;
         }
 
+        // O cálculo deve começar agora
+        wait_left = wait_states;
         return SIMPLE_BUS_WAIT;
     }
 
     simple_bus_status write(int *data, unsigned int address) {
-        if (wait_count < 0) {
-            wait_count = WaitStates;
+        // Há um cálculo em andamento
+        if (wait_left >= 0)
             return SIMPLE_BUS_WAIT;
-        }
 
-        if (wait_count == 0) {
-            int_at_addr(address) = *data;
-            calculate();
-            wait_count = WaitStates;  // o resultado só fica pronto daqui a
-                                      // `WaitStates` estados
-            return SIMPLE_BUS_OK;
-        }
+        // Não há cálculo em andamento e podemos escrever nos registradores
+        if (address == OpA)
+            opA = *data;
+        else if (address == OpB)
+            opB = *data;
 
-        return SIMPLE_BUS_WAIT;
+        return SIMPLE_BUS_OK;
     }
 
     //////////////////////////////////////////////
     //        Direct BUS/Slave Interface        //
     //////////////////////////////////////////////
     bool direct_read(int *data, unsigned int address) {
-        *data = int_at_addr(address);
+        *data = calculate(address);
         return true;
     }
 
     bool direct_write(int *data, unsigned int address) {
-        int_at_addr(address) = *data;
-        calculate();
+        if (address == OpA)
+            opA = *data;
+        else if (address == OpB)
+            opB = *data;
         return true;
     }
 
