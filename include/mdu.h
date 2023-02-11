@@ -18,6 +18,7 @@ struct MDU : public simple_bus_slave_if, public sc_module {
 
     // Constantes
     enum Const {
+        Priority = 1,
         StartAddr = 256,
         OpA = 256,
         OpB = 260,

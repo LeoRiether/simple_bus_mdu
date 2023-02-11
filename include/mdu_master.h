@@ -7,19 +7,18 @@
 
 SC_MODULE(mdu_master) {
     sc_port<simple_bus_blocking_if> bus;
-    enum { Priority = 1 };
 
     SC_CTOR(mdu_master) : bus("bus") {
         SC_THREAD(main_action);
     }
 
     void write(int* data, unsigned int addr) {
-        bus->burst_write(Priority, data, addr);
+        bus->burst_write(MDU::Priority, data, addr);
     }
 
     int read(unsigned int addr) {
         int data;
-        bus->burst_read(Priority, &data, addr);
+        bus->burst_read(MDU::Priority, &data, addr);
         return data;
     }
 

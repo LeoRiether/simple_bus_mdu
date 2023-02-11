@@ -17,14 +17,17 @@
 //
 // - read/write(&data, MemAddr)
 // Executa a leitura/escrita com o endereço e modo definidos anteriormente
+//
+// Essas 3 operações são feitas no módulo mem_mips_bus_wrapper
 struct mem_mips : public sc_module, public simple_bus_slave_if, public mem_if {
    public:
     enum OpType { Byte, Half, Word };
     enum Const {
+        Priority = 2,
         StartAddr = 1024,
-        MemAddr = 1028,    // lê/escreve na memória
+        OpTypeReg = 1028,  // lê/escreve no op_type_reg
         AddrReg = 1032,    // lê/escreve no addr_reg
-        OpTypeReg = 1036,  // lê/escreve no op_type_reg
+        MemAddr = 1036,    // lê/escreve na memória
         EndAddr = 1039,
     };
 
@@ -40,22 +43,31 @@ struct mem_mips : public sc_module, public simple_bus_slave_if, public mem_if {
     int wait_left;  // número de ciclos restantes até a operação atual terminar
 
    public:
-    enum { Priority = 2 };
+    sc_in<bool> clk;
 
     SC_HAS_PROCESS(mem_mips);
-    mem_mips(sc_module_name name, int _start_addr, uint32_t _size,
-             int _wait_states, bool _verbose = false)
+    mem_mips(sc_module_name name, uint32_t _size, int _wait_states,
+             bool _verbose = false)
         : sc_module(name),
           size(_size),
           addr_reg(0),
           op_type_reg(Word),
           wait_states(_wait_states),
-          wait_left(0) {
+          wait_left(-1),
+          clk("clk") {
         mem = new int32_t[size];
+
+        SC_METHOD(update_wait);
+        sensitive << clk.pos();
     }
 
     ~mem_mips() {
         delete[] mem;
+    }
+
+    void update_wait() {
+        if (wait_left >= 0)
+            wait_left--;
     }
 
     ///////////////////////////////////////
@@ -216,7 +228,7 @@ struct mem_mips : public sc_module, public simple_bus_slave_if, public mem_if {
 
         // A memória acabou de ler os dados
         if (wait_left == 0) {
-            *data = direct_read(data, address);
+            direct_read(data, address);
             return SIMPLE_BUS_OK;
         }
 
@@ -228,6 +240,7 @@ struct mem_mips : public sc_module, public simple_bus_slave_if, public mem_if {
             wait_left = 0; 
         return SIMPLE_BUS_WAIT;
     }
+
     simple_bus_status write(int *data, unsigned int addr) {
         // Há um cálculo em andamento
         if (wait_left >= 0)
@@ -250,25 +263,25 @@ struct mem_mips : public sc_module, public simple_bus_slave_if, public mem_if {
     ////////////////////////////////////////
     bool direct_read(int *data, unsigned int address) {
         if (op_type_reg == Byte)
-            *data = lb(address, 0);
+            *data = lb(addr_reg, 0);
         else if (op_type_reg == Half)
-            *data = lh(address, 0);
+            *data = lh(addr_reg, 0);
         else
-            *data = lw(address, 0);
+            *data = lw(addr_reg, 0);
         return true;
     }
     bool direct_write(int *data, unsigned int address) {
-        if (address == AddrReg)
-            addr_reg = *data;
-        else if (address == OpTypeReg)
+        if (address == OpTypeReg)
             op_type_reg = (OpType)*data;
+        else if (address == AddrReg)
+            addr_reg = *data;
         else if (address == MemAddr) {
             if (op_type_reg == Byte)
-                sb(address, 0, *data);
+                sb(addr_reg, 0, *data);
             else if (op_type_reg == Half)
-                sh(address, 0, *data);
+                sh(addr_reg, 0, *data);
             else
-                sw(address, 0, *data);
+                sw(addr_reg, 0, *data);
         }
         return true;
     }
