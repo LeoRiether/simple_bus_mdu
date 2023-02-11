@@ -12,15 +12,15 @@ SC_MODULE(mdu_direct_master) {
         SC_THREAD(main_action);
     }
 
+    int read(MDU::Const addr) {
+        int data;
+        bus->direct_read(&data, addr);
+        return data;
+    }
+
     void do_testcase(int opA, int opB) {
         bus->direct_write(&opA, MDU::OpA);
         bus->direct_write(&opB, MDU::OpB);
-
-        auto read = [&](MDU::Const addr) {
-            int data;
-            bus->direct_read(&data, addr);
-            return data;
-        };
 
         cout << "opA = " << opA << ", opB = " << opB << '\n';
         cout << "mHigh = " << read(MDU::MHigh) << ", mLow = " << read(MDU::MLow)

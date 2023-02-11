@@ -89,6 +89,8 @@ struct MDU : public simple_bus_slave_if, public sc_module {
             opA = *data;
         else if (address == OpB)
             opB = *data;
+        else
+            return SIMPLE_BUS_ERROR;
 
         return SIMPLE_BUS_OK;
     }
@@ -106,6 +108,8 @@ struct MDU : public simple_bus_slave_if, public sc_module {
             opA = *data;
         else if (address == OpB)
             opB = *data;
+        else
+            return false;
         return true;
     }
 
