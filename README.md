@@ -1,6 +1,11 @@
 # MDU -- Unidade de Multiplicação e Divisão
 ## Utilizando o simple_bus do SystemC
 
+<<<<<<< HEAD
+=======
+Por Leonardo Alves Riether - 190032413
+
+>>>>>>> 20431cf (github link)
 Também disponível em [https://github.com/LeoRiether/simple_bus_mdu/](https://github.com/LeoRiether/simple_bus_mdu/) (com markdown bem formatado :) )
 
 ## Módulos
