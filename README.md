@@ -1,6 +1,8 @@
 # MDU -- Unidade de Multiplicação e Divisão
 ## Utilizando o simple_bus do SystemC
 
+Também disponível em [https://github.com/LeoRiether/simple_bus_mdu/](https://github.com/LeoRiether/simple_bus_mdu/) (com markdown bem formatado :) )
+
 ## Módulos
 - Os módulos do [simple_bus](https://github.com/systemc/systemc-2.3/tree/master/examples/sysc/simple_bus) são disponibilizados pelo próprio SystemC, e foram copiados para os diretórios src/ e simple_bus_headers/
 - **MDU**: definida em include/mdu.h, é um módulo de multiplicação e divisão de inteiros de 32 bits, que conta com uma interface para comunicação através do simple_bus. A MDU possui dois registradores, `opA` e `opB`, que devem ser escritos antes de realizar a operação. Depois, ao realizar um `read` no endereço apropriado (`MLow`, `MHigh`, `Div` ou `Mod`), a MDU coloca no bus o valor do cálculo efetuado, após um certo número de ciclos (configurável por meio da variável `wait_states`).
