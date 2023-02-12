@@ -114,7 +114,6 @@ SC_MODULE(mips_v0) {
     }
 
     void execute() {
-        int64_t u;
         char c;
         size_t pos;
 

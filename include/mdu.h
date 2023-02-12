@@ -5,6 +5,8 @@
 #include "simple_bus_slave_if.h"
 #include "simple_bus_types.h"
 
+// Módulo de Multiplicação e Divisão. Possui uma interface para comunicação
+// através do simple_bus
 struct MDU : public simple_bus_slave_if, public sc_module {
     sc_in<bool> clock;
 
