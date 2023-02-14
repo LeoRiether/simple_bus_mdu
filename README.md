@@ -3,14 +3,14 @@
 
 Por Leonardo Alves Riether - 190032413
 
-Também disponível em [https://github.com/LeoRiether/simple_bus_mdu/](https://github.com/LeoRiether/simple_bus_mdu/) (com markdown bem formatado :) )
+Também disponível em [https://github.com/LeoRiether/simple_bus_mdu/tree/entrega/mips_simple_bus](https://github.com/LeoRiether/simple_bus_mdu/tree/entrega/mips_simple_bus) (com markdown bem formatado :) )
 
 ## Módulos
 - Os módulos do [simple_bus](https://github.com/systemc/systemc-2.3/tree/master/examples/sysc/simple_bus) são disponibilizados pelo próprio SystemC, e foram copiados para os diretórios src/ e simple_bus_headers/
 - **MDU**: definida em include/mdu.h, é um módulo de multiplicação e divisão de inteiros de 32 bits, que conta com uma interface para comunicação através do simple_bus. A MDU possui dois registradores, `opA` e `opB`, que devem ser escritos antes de realizar a operação. Depois, ao realizar um `read` no endereço apropriado (`MLow`, `MHigh`, `Div` ou `Mod`), a MDU coloca no bus o valor do cálculo efetuado, após um certo número de ciclos (configurável por meio da variável `wait_states`).
-- O módulo **mdu_direct_master** é definido em include/mdu_direct_master.h, e executa testes da MDU, por meio de sua interface direta (`direct_read` e `direct_writes`).
-- Já o **mdu_master**, definido em include/mdu_master.h, executa os testes por meio da interface blocante da MDU, que possui um delay de alguns ciclos para retornar um resultado (`burst_read` e `burst_write`). 
-- Também podem ser encontrados módulos do MIPS (include/mem_mips.h, include/mem_mips_bus_wrapper.h e include/mips_v0.h) com sua interface de comunicação pelo simple_bus, mas ainda não foram efetuados testes dessa parte.
+- **mem_mips**: escrita no `include/mem_mips.h`, é uma memória lenta, com tempo de leitura em ciclos de clock configurável pelo construtor. Para ler ou escrever um dado na memória, é necessário primeiro escrever em dois registradores presentes nela: o `op_type_reg` e o `addr_reg`, que representam, respectivamente, o tipo da operação (se é em byte, half word ou word), e o endereço em que se deseja ler/escrever. Após isso, é possível realizar uma leitura ou escrita, que será efetivada com base nos valores dos registradores. A comunicação com esse módulo é feita por meio do simple_bus.
+- **mem_mips_bus_wrapper**: para facilitar o processo de leitura e escrita na `mem_mips`, é possível utilizar o `mem_mips_bus_wrapper`, que realiza `burst_reads` e `burst_writes` de acordo com o processo descrito acima. Este módulo foi definido no arquivo `include/mem_mips_bus_wrapper.h`.
+- **mips_v0**: definido em `include/mips_v0.h`, é o módulo que executa as instruções do MIPS. O mips_v0 se comunica com a memória por meio do `mem_mips_bus_wrapper` e com a `MDU`, ambos utilizando o simple_bus.
 
 ## Executando o Código
 A compilação do projeto requer o `cmake` e pode ser feita através do comando
