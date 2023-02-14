@@ -14,7 +14,8 @@ std::unordered_map<uint8_t, const char*> FUNCT_STR = {
     {0x20, "ADD"}, {0x21, "ADDU"}, {0x22, "SUB"},     {0x18, "MUL"},
     {0x1A, "DIV"}, {0x24, "AND"},  {0x25, "OR"},      {0x26, "XOR"},
     {0x27, "NOR"}, {0x2A, "SLT"},  {0x08, "JR"},      {0x00, "SLL"},
-    {0x02, "SRL"}, {0x03, "SRA"},  {0x0C, "SYSCALL"},
+    {0x02, "SRL"}, {0x03, "SRA"},  {0x0C, "SYSCALL"}, {0x10, "MFHI"},
+    {0x12, "MFHI"},
 };
 
 std::unordered_map<uint8_t, const char*> OPCODE_STR = {
@@ -176,6 +177,12 @@ SC_MODULE(mips_v0) {
                         bus->burst_write(MDU::Priority, &breg[rt], MDU::OpB);
                         bus->burst_read(MDU::Priority, &lo, MDU::Div);
                         bus->burst_read(MDU::Priority, &hi, MDU::Mod);
+                        break;
+                    case MFLO:
+                        breg[rd] = lo;
+                        break;
+                    case MFHI:
+                        breg[rd] = hi;
                         break;
                     case ADD:
                         breg[rd] = breg[rs] + breg[rt];

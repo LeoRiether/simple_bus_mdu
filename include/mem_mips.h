@@ -25,10 +25,10 @@ struct mem_mips : public sc_module, public simple_bus_slave_if, public mem_if {
     enum Const {
         Priority = 2,
         StartAddr = 1024,
-        OpTypeReg = 1028,  // lê/escreve no op_type_reg
-        AddrReg = 1032,    // lê/escreve no addr_reg
-        MemAddr = 1036,    // lê/escreve na memória
-        EndAddr = 1039,
+        OpTypeReg = 1024,  // lê/escreve no op_type_reg
+        AddrReg = 1028,    // lê/escreve no addr_reg
+        MemAddr = 1032,    // lê/escreve na memória
+        EndAddr = 1035,
     };
 
    private:
