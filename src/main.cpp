@@ -12,6 +12,7 @@
 #include <mips_v0.h>
 #include <systemc.h>
 #include <mem_mips.h>
+#include <cache.h>
 
 #include "simple_bus.h"
 #include "simple_bus_arbiter.h"
@@ -29,11 +30,15 @@ int sc_main(int argc, char* argv[]) {
     bus.slave_port(mdu);
     bus.arbiter_port(arbiter);
 
+    Cache cache("cache");
+    cache.bus(bus);
+
     sc_signal<bool> reset("reset");
-    mips_v0 mips("mips", true);
+    mips_v0 mips("mips", false);
     mips.clk(clock);
     mips.bus(bus);
     mips.reset(reset);
+    mips.pmem(cache);
 
     mem_mips mem("mem", MEM_SIZE, 2);
     mem.clk(clock);

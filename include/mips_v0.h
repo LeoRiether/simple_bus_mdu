@@ -31,6 +31,7 @@ std::unordered_map<uint8_t, const char*> OPCODE_STR = {
 SC_MODULE(mips_v0) {
    private:
     bool verbose;
+    bool exited;
 
     int32_t breg[32];
     int32_t pc,  // contador de programa
@@ -41,21 +42,20 @@ SC_MODULE(mips_v0) {
 
     int32_t opcode, rs, rt, rd, shamt, funct, kte16;
 
-    Cache pmem;
-
    public:
     sc_in<bool> clk;
     sc_port<simple_bus_blocking_if> bus;
+    sc_port<mem_if> pmem;
     sc_in<bool> reset;
 
     SC_HAS_PROCESS(mips_v0);
     mips_v0(sc_module_name name, bool _verbose = false)
         : verbose(_verbose),
-          pmem("pmem"),
+          exited(false),
           clk("clk"),
           bus("bus"),
+          pmem("pmem"),
           reset("reset") {
-        pmem.bus(bus);
 
         SC_THREAD(run);
         sensitive << clk.pos();
@@ -71,7 +71,7 @@ SC_MODULE(mips_v0) {
     }
 
     void fetch() {
-        ri = pmem.lw(pc, 0);
+        ri = pmem->lw(pc, 0);
         pc += 4;
     }
 
@@ -137,7 +137,7 @@ SC_MODULE(mips_v0) {
                                 // código, visto que o mips_v0 não tem acesso
                                 // direto ao array da memória
                                 pos = breg[A0];
-                                while ((c = pmem.lb(pos++, 0)) != 0)
+                                while ((c = pmem->lb(pos++, 0)) != 0)
                                     cout << c;
                                 break;
                             case 5:
@@ -147,7 +147,7 @@ SC_MODULE(mips_v0) {
                                 break;
                             case 10:
                                 // NOTE: aqui era um exit(0); antes
-                                sc_stop();
+                                exited = true;
                                 return;
                             default:
                                 break;
@@ -266,28 +266,28 @@ SC_MODULE(mips_v0) {
                 // NOTE: Como o mips_v0 não tem acesso direto à memória, o
                 // código comentado abaixo não dá mais certo breg[rt] =
                 // (char)(mem[breg[rs] + kte16]);
-                breg[rt] = (char)(pmem.lb(breg[rs] + kte16, 0));
+                breg[rt] = (char)(pmem->lb(breg[rs] + kte16, 0));
                 break;
             case LH:
-                breg[rt] = pmem.lh(breg[rs], kte16);
+                breg[rt] = pmem->lh(breg[rs], kte16);
                 break;
             case LW:
-                breg[rt] = pmem.lw(breg[rs], kte16);
+                breg[rt] = pmem->lw(breg[rs], kte16);
                 break;
             case LHU:
                 // NOTE: Como o mips_v0 não tem acesso direto à memória, o
                 // código comentado abaixo não dá mais certo breg[rt] =
                 // (uint32_t)mem[breg[rs] + kte16];
-                breg[rt] = (uint32_t)pmem.lw(breg[rs] + kte16, 0);
+                breg[rt] = (uint32_t)pmem->lw(breg[rs] + kte16, 0);
                 break;
             case SB:
-                pmem.sb(breg[rs], kte16, get_byte_0(breg[rt]));
+                pmem->sb(breg[rs], kte16, get_byte_0(breg[rt]));
                 break;
             case SH:
-                pmem.sh(breg[rs], kte16, (uint16_t)(breg[rt] & 0xFFFF));
+                pmem->sh(breg[rs], kte16, (uint16_t)(breg[rt] & 0xFFFF));
                 break;
             case SW:
-                pmem.sw(breg[rs], kte16, breg[rt]);
+                pmem->sw(breg[rs], kte16, breg[rt]);
                 break;
             default:
                 break;
@@ -302,13 +302,16 @@ SC_MODULE(mips_v0) {
 
     void run() {
         init();
-        while (pc < DATA_SEGMENT_START) {
+        while (pc < DATA_SEGMENT_START && !exited) {
             wait();
             step();
         }
 
+        exited = true;
         if (verbose)
             fprintf(stderr, "run ended! pc = %x\n", pc);
+
+        cerr << "\nRun ended at " << sc_time_stamp() << endl;
         sc_stop();
     }
 };

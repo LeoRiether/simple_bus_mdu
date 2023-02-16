@@ -51,8 +51,9 @@ struct CacheEntry {
     // Garante que a tag da entrada é a mesma que a que desejamos acessar.
     // Se a tag for diferente, há um cache miss, e devemos carregar a linha
     // da cache
-    void ensure_same_tag(mem_if& main_mem, const AddressParts& addr) {
+    void ensure_correct_tag(mem_if& main_mem, const AddressParts& addr) {
         if (!valid || tag != addr.tag) {
+            cerr << "!";
             clear(main_mem, addr.index);
             tag = addr.tag;
 
@@ -63,37 +64,43 @@ struct CacheEntry {
                 data[block] = main_mem.lw(block_addr, 0);
             }
             valid = true;
+        } else {
+            cerr << ".";
         }
     }
 
     int8_t lb(mem_if& main_mem, const AddressParts& a) {
-        ensure_same_tag(main_mem, a);
+        ensure_correct_tag(main_mem, a);
         int32_t word = data[a.block_offset];
         word = (word >> 8 * a.byte_offset);
         return word & 0xFF;
     }
     int16_t lh(mem_if& main_mem, const AddressParts& a) {
-        ensure_same_tag(main_mem, a);
+        ensure_correct_tag(main_mem, a);
         int32_t word = data[a.block_offset];
         word = (word >> 8 * (a.byte_offset & 2));
         return word & 0xFFFF;
     }
     int32_t lw(mem_if& main_mem, const AddressParts& a) {
-        ensure_same_tag(main_mem, a);
+        ensure_correct_tag(main_mem, a);
         return data[a.block_offset];
     }
     void sb(mem_if& main_mem, const AddressParts& a, sc_int<8> dado) {
-        ensure_same_tag(main_mem, a);
-        // TODO:
+        ensure_correct_tag(main_mem, a);
+        uint8_t* pb = (uint8_t*)&data[a.block_offset];
+        pb += a.byte_offset;
+        *pb = (uint8_t)dado;
         dirty = true;
     }
     void sh(mem_if& main_mem, const AddressParts& a, sc_int<16> dado) {
-        ensure_same_tag(main_mem, a);
-        // TODO:
+        ensure_correct_tag(main_mem, a);
+        uint16_t* ph = (uint16_t*)&data[a.block_offset];
+        ph += (a.byte_offset & 2) >> 1;
+        *ph = (uint16_t)dado;
         dirty = true;
     }
     void sw(mem_if& main_mem, const AddressParts& a, sc_int<32> dado) {
-        ensure_same_tag(main_mem, a);
+        ensure_correct_tag(main_mem, a);
         data[a.block_offset] = dado;
         dirty = true;
     }
