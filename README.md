@@ -3,7 +3,7 @@
 
 Por Leonardo Alves Riether - 190032413
 
-Também disponível em [https://github.com/LeoRiether/simple_bus_mdu/tree/entrega/mips_simple_bus](https://github.com/LeoRiether/simple_bus_mdu/tree/entrega/mips_simple_bus) (com markdown bem formatado :) )
+Também disponível em [https://github.com/LeoRiether/simple_bus_mdu/tree/entrega/mips_cache](https://github.com/LeoRiether/simple_bus_mdu/tree/entrega/mips_cache) (com markdown bem formatado :) )
 
 ## Módulos
 - Os módulos do [simple_bus](https://github.com/systemc/systemc-2.3/tree/master/examples/sysc/simple_bus) são disponibilizados pelo próprio SystemC, e foram copiados para os diretórios src/ e simple_bus_headers/
