@@ -30,7 +30,7 @@ int sc_main(int argc, char* argv[]) {
     bus.arbiter_port(arbiter);
 
     sc_signal<bool> reset("reset");
-    mips_v0 mips("mips", false);
+    mips_v0 mips("mips", true);
     mips.clk(clock);
     mips.bus(bus);
     mips.reset(reset);

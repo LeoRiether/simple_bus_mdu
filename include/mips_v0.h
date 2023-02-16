@@ -1,4 +1,5 @@
 #pragma once
+#include <cache.h>
 #include <definitions.h>
 #include <mdu.h>
 #include <mem_if.h>
@@ -40,7 +41,7 @@ SC_MODULE(mips_v0) {
 
     int32_t opcode, rs, rt, rd, shamt, funct, kte16;
 
-    mem_mips_bus_wrapper pmem;
+    Cache pmem;
 
    public:
     sc_in<bool> clk;
